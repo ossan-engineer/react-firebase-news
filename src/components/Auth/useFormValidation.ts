@@ -4,7 +4,8 @@ import { bool } from "prop-types";
 
 function useFormValidation(
   initialState: Values,
-  validate: (values: Values) => void
+  validate: (values: Values) => void,
+  authenticateUser: () => void
 ) {
   const [values, setValues] = useState(initialState);
   const [errors, setErrors] = useState<any>({});
@@ -14,7 +15,7 @@ function useFormValidation(
     if (isSubmitting) {
       const noErrors = Object.keys(errors).length === 0;
       if (noErrors) {
-        console.log("authenticated", values);
+        authenticateUser();
         setIsSubmitting(false);
       } else {
         setIsSubmitting(false);
@@ -40,7 +41,6 @@ function useFormValidation(
     const validationErrors = validate(values);
     setErrors(validationErrors);
     setIsSubmitting(true);
-    console.log({ values });
   }
 
   return {
