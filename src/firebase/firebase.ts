@@ -1,13 +1,16 @@
 import app from "firebase/app";
 import "firebase/auth";
+import "firebase/firestore";
 import firebaseConfig from "./config";
 
 class Firebase {
   auth: any;
+  db: any;
 
   constructor() {
     app.initializeApp(firebaseConfig);
     this.auth = app.auth();
+    this.db = app.firestore();
   }
 
   async register(name: string, email: string, password: string) {
@@ -26,6 +29,10 @@ class Firebase {
 
   async logout() {
     return await this.auth.signOut();
+  }
+
+  async resetPassword(email) {
+    await this.auth.sendPasswordResetEmail(email);
   }
 }
 
