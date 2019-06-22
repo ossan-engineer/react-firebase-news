@@ -5,13 +5,17 @@ import LinkItem from "./LinkItem";
 function LinkList(props: any) {
   const { firebase } = useContext(FirebaseContext);
   const [links, setLinks] = useState([]);
+  const isNewPage = props.location.pathname.includes("new");
 
   useEffect(() => {
     getLinks();
   }, []);
 
   function getLinks() {
-    firebase.db.collection("links").onSnapshot(handleSnapshot);
+    firebase.db
+      .collection("links")
+      .orderBy("created", "desc")
+      .onSnapshot(handleSnapshot);
   }
 
   function handleSnapshot(snapshot) {
@@ -21,9 +25,19 @@ function LinkList(props: any) {
     setLinks(links);
   }
 
+  function renderLinks() {
+    if (isNewPage) {
+      return links;
+    }
+    const topLinks = links
+      .slice()
+      .sort((l1, l2) => l2.votes.length - l1.votes.length);
+    return topLinks;
+  }
+
   return (
     <div>
-      {links.map((link: any, index: number) => (
+      {renderLinks().map((link: any, index: number) => (
         <LinkItem
           key={link.id}
           showCount={true}
