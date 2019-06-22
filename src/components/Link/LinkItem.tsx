@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Link, withRouter } from "react-router-dom";
-import { getDomain } from "../../utils";
 import distanceInWordsToNow from "date-fns/distance_in_words_to_now";
+import { getDomain } from "../../utils";
 import FirebaseContext from "../../firebase/context";
 
 function LinkItem({ showCount, link, index, history }: any) {
@@ -52,7 +52,9 @@ function LinkItem({ showCount, link, index, history }: any) {
       </div>
       <div className="ml1">
         <div>
-          {link.description}{" "}
+          <a href={link.url} className="black no-underline">
+            {link.description}
+          </a>{" "}
           <span className="link">({getDomain(link.url)})</span>
         </div>
         <div className="f6 lh-copy gray">
