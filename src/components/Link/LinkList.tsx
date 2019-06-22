@@ -6,13 +6,11 @@ import { LINKS_PER_PAGE } from "../../utils";
 function LinkList(props: any) {
   const { firebase } = useContext(FirebaseContext);
   const [links, setLinks] = useState([]);
-  const [linkLength, setLinkLength] = useState(0);
+  // const [linkLength, setLinkLength] = useState(0);
   const [cursor, setCursor] = useState(null);
   const isNewPage = props.location.pathname.includes("new");
   const isTopPage = props.location.pathname.includes("top");
   const page = Number(props.match.params.page);
-
-  console.log(links.length);
 
   useEffect(() => {
     const unsubscribe = getLinks();
@@ -73,7 +71,7 @@ function LinkList(props: any) {
     }
   }
 
-  const pageIndex = page ? (page - 1) * LINKS_PER_PAGE + 1 : 1;
+  const pageIndex = page ? (page - 1) * LINKS_PER_PAGE + 1 : 0;
 
   return (
     <div>
