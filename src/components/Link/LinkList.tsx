@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import axios from "axios";
 import { FirebaseContext } from "../../firebase";
 import LinkItem from "./LinkItem";
 import { LINKS_PER_PAGE } from "../../utils";
@@ -44,6 +45,19 @@ function LinkList(props: any) {
         .startAfter(cursor.created)
         .limit(LINKS_PER_PAGE)
         .onSnapshot(handleSnapshot);
+    } else {
+      const offset = page * LINKS_PER_PAGE - LINKS_PER_PAGE;
+      axios
+        .get(
+          `https://us-central1-react-firebase-news.cloudfunctions.net/linksPagination?offset=${offset}`
+        )
+        .then(response => {
+          const links = response.data;
+          const lastLink = links[links.length - 1];
+          setLinks(links);
+          setCursor(lastLink);
+        });
+      return () => {};
     }
   }
 
