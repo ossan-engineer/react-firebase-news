@@ -9,9 +9,11 @@ function LinkList(props: any) {
   const [links, setLinks] = useState([]);
   // const [linkLength, setLinkLength] = useState(0);
   const [cursor, setCursor] = useState(null);
+  const [loading, setLoading] = useState(false);
   const isNewPage = props.location.pathname.includes("new");
   const isTopPage = props.location.pathname.includes("top");
   const page = Number(props.match.params.page);
+  const linksRef = firebase.db.collection("links");
 
   useEffect(() => {
     const unsubscribe = getLinks();
@@ -21,26 +23,25 @@ function LinkList(props: any) {
   function getLinks() {
     const hasCursor = !!cursor;
 
+    setLoading(true);
+
     // firebase.db
     //   .collection("links")
     //   .get()
     //   .then(snapshot => setLinkLength(snapshot.size));
 
     if (isTopPage) {
-      return firebase.db
-        .collection("links")
+      return linksRef
         .orderBy("voteCount", "desc")
         .limit(LINKS_PER_PAGE)
         .onSnapshot(handleSnapshot);
     } else if (page === 1) {
-      return firebase.db
-        .collection("links")
+      return linksRef
         .orderBy("created", "desc")
         .limit(LINKS_PER_PAGE)
         .onSnapshot(handleSnapshot);
     } else if (hasCursor) {
-      return firebase.db
-        .collection("links")
+      return linksRef
         .orderBy("created", "desc")
         .startAfter(cursor.created)
         .limit(LINKS_PER_PAGE)
@@ -56,6 +57,7 @@ function LinkList(props: any) {
           const lastLink = links[links.length - 1];
           setLinks(links);
           setCursor(lastLink);
+          setLoading(false);
         });
       return () => {};
     }
@@ -68,6 +70,7 @@ function LinkList(props: any) {
     const lastLink = links[links.length - 1];
     setLinks(links);
     setCursor(lastLink);
+    setLoading(false);
   }
 
   function visitPrevioustPage() {
@@ -88,7 +91,7 @@ function LinkList(props: any) {
   const pageIndex = page ? (page - 1) * LINKS_PER_PAGE + 1 : 0;
 
   return (
-    <div>
+    <div style={{ opacity: loading ? 0.25 : 1 }}>
       {links.map((link: any, index: number) => (
         <LinkItem
           key={link.id}
